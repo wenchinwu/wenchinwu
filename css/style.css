@@ -1,0 +1,266 @@
+/* ==========================================================================
+   Wen-Chin Wu — academic site
+   Single stylesheet. No frameworks. Mobile-first.
+   Layout follows laidingyi.com; colors and fonts are Wen-Chin Wu's original
+   site (Laura template customization): FT-style pink background, claret
+   accent, Open Sans body, Raleway headings.
+   To restyle: change the color values, fonts, or --maxw (width) below.
+   ========================================================================== */
+
+:root {
+  /* colors (original site values) */
+  /* The original palette is the Financial Times Origami palette (o-colors). */
+  --bg:        #fff1e5;   /* page background (FT 'paper') */
+  --panel:     #f2dfce;   /* 中文自介 / abstract panel (FT 'wheat') */
+  --text:      #66605c;   /* bio / general text (FT 'black-60') */
+  /* The original rendered the Research list and contact text dark (Bootstrap
+     text-dark #343a40 / #444); FT 'black-80' (0.2 x paper) is the FT
+     equivalent (owner choice 2026-10-05). */
+  --ink:       #33302e;   /* papers, abstracts, contact (FT 'black-80') */
+  --heading:   #3b434a;   /* original section headings */
+  --accent:    #990f3d;   /* original claret accent (FT Origami 'claret') */
+  --accent-dk: #730b2e;   /* darker claret for hover */
+  /* Links use claret (owner choice 2026-10-05). The old template left links at
+     Bootstrap blue #007bff, the only non-FT color in the original palette. */
+  --link:      var(--accent);
+  --link-hover:var(--accent-dk);
+  --gold:      #ffc85a;   /* original nav hover */
+  --nav-bg:    rgba(25, 28, 31, 0.92);  /* original scrolled header */
+  --footer-bg: #262a33;   /* original footer (FT 'slate') */
+  --border:    #e8d2bf;   /* warm divider, between --bg and --panel */
+  /* fonts & layout */
+  --sans:      "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang TC", "Microsoft JhengHei", "Noto Sans CJK TC", sans-serif;
+  --display:   "Raleway", "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --maxw:      760px;
+  --nav-h:     3.5rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--link); text-decoration: none; }
+a:hover, a:focus { color: var(--link-hover); text-decoration: underline; }
+
+h1, h2, h3, h4 {
+  font-family: var(--display); line-height: 1.25; font-weight: 700; color: var(--heading);
+}
+
+img { max-width: 100%; height: auto; }
+
+/* ---- skip link (a11y) ---- */
+.skip-link {
+  position: absolute; left: -999px; top: 0;
+  background: var(--accent); color: #fff; padding: .5rem .75rem; z-index: 200;
+}
+.skip-link:focus { left: .5rem; top: .5rem; color: #fff; }
+
+/* ---- navigation (original dark header, gold hover) ---- */
+.site-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--nav-bg);
+  backdrop-filter: saturate(180%) blur(8px);
+}
+.nav-container {
+  max-width: var(--maxw); margin: 0 auto; padding: 0 1.25rem;
+  min-height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap;
+  /* The collapsed menu is a zero-height second flex line; without this the
+     spare min-height is split across both lines and the brand sits high. */
+  align-content: center;
+}
+.nav-brand { font-family: var(--display); font-weight: 700; color: #fff; font-size: 1.05rem; }
+.nav-brand:hover, .nav-brand:focus { color: #fff; text-decoration: none; }
+.nav-brand-zh { font-weight: 500; }
+
+.nav-menu {
+  list-style: none; display: flex; gap: 1.25rem; margin: 0; padding: 0;
+}
+.nav-link {
+  font-family: var(--display); color: #fff; font-size: .82rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.nav-link:hover, .nav-link:focus { color: var(--gold); text-decoration: none; }
+
+/* hamburger (CSS-only, checkbox hack) */
+/* The checkbox is display:none on desktop and visually hidden (but focusable)
+   on mobile, so keyboard users can open the menu with Space. */
+.nav-toggle { display: none; }
+.nav-toggle-label {
+  display: none; cursor: pointer; padding: .4rem; margin: -0.4rem;
+}
+.nav-toggle-label span {
+  display: block; width: 22px; height: 2px; margin: 4px 0;
+  background: #fff; transition: .25s;
+}
+
+@media (max-width: 599px) {
+  .nav-toggle {
+    display: block; position: absolute; opacity: 0;
+    width: 1px; height: 1px; margin: 0; padding: 0;
+  }
+  .nav-toggle:focus-visible ~ .nav-toggle-label {
+    outline: 2px solid var(--gold); outline-offset: 2px;
+  }
+  .nav-toggle-label { display: block; }
+  .nav-menu {
+    flex-basis: 100%; flex-direction: column; gap: .25rem;
+    max-height: 0; overflow: hidden; visibility: hidden;
+    /* No closing transition: the menu must collapse instantly when a link is
+       tapped, so the anchor scroll position is computed against the already
+       collapsed nav instead of the expanded one. */
+  }
+  .nav-menu li { padding: .35rem 0; border-top: 1px solid rgba(255, 255, 255, .15); }
+  .nav-toggle:checked ~ .nav-menu {
+    max-height: 22rem; padding-bottom: .5rem; visibility: visible;
+    transition: max-height .25s ease;
+  }
+  .nav-toggle:checked ~ .nav-toggle-label span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav-toggle:checked ~ .nav-toggle-label span:nth-child(2) { opacity: 0; }
+  .nav-toggle:checked ~ .nav-toggle-label span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+}
+
+/* ---- layout ---- */
+.main-content { max-width: var(--maxw); margin: 0 auto; padding: 0 1.25rem; }
+
+.section {
+  padding: 2.75rem 0;
+  /* Tuck the section's border-top and part of its padding under the sticky
+     nav, so anchor jumps land the heading ~20px below the nav. */
+  scroll-margin-top: calc(var(--nav-h) - 1.5rem);
+  border-top: 1px solid var(--border);
+}
+.section:first-of-type { border-top: 0; }
+
+.section > h2 {
+  font-size: 1.5rem; margin: 0 0 1.25rem; text-transform: uppercase; letter-spacing: .5px;
+  padding-bottom: .35rem; border-bottom: 2px solid var(--accent);
+  display: inline-block;
+}
+.subsection-heading {
+  font-size: 1.1rem; color: var(--accent);
+  margin: 2rem 0 .9rem; font-weight: 700;
+}
+
+/* ---- hero / about ---- */
+.hero { padding-top: 2.5rem; }
+.hero-inner {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 1.5rem; text-align: center;
+}
+.hero-photo {
+  width: 200px; height: 200px; object-fit: cover; border-radius: 50%;
+  border: 4px solid var(--panel); box-shadow: 0 4px 18px rgba(0,0,0,.10);
+}
+/* Original: hero name in Open Sans (#hero h1), not the Raleway heading font. */
+.hero-name { font-family: var(--sans); font-size: 2rem; margin: 0 0 .35rem; }
+.hero-name-zh { font-weight: 600; }
+.hero-affil { margin: 0 0 .5rem; color: var(--heading); font-size: 1.02rem; }
+/* Original: subtitle was #hero h2, i.e. Raleway. */
+.hero-tagline { margin: 0 0 1rem; font-family: var(--display); font-size: 1.05rem; font-style: italic; }
+
+.hero-actions {
+  display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center;
+  margin-bottom: 1rem;
+}
+.btn {
+  display: inline-block; padding: .45rem .9rem; border-radius: 6px;
+  border: 1px solid var(--accent); color: var(--accent);
+  font-size: .92rem; font-weight: 600;
+}
+.btn:hover, .btn:focus { background: var(--accent); color: #fff; text-decoration: none; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover, .btn-primary:focus { background: var(--accent-dk); border-color: var(--accent-dk); color: #fff; }
+
+@media (min-width: 640px) {
+  .hero-inner { flex-direction: row; align-items: center; text-align: left; }
+  .hero-actions { justify-content: flex-start; }
+  .hero-photo { flex: 0 0 auto; }
+}
+
+/* ---- prose ---- */
+.prose { margin-top: 1.75rem; }
+.prose p { margin: 0 0 1rem; max-width: 70ch; }
+.prose-panel {
+  background: var(--panel); padding: 1.25rem 1.4rem .4rem; border-radius: 6px;
+}
+.interests {
+  margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border);
+  font-size: .96rem;
+}
+.interests strong { color: var(--heading); }
+.email-text { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .93em; }
+
+/* ---- publications ---- */
+.papers-list { display: flex; flex-direction: column; gap: 1.15rem; }
+/* Original: citations were <h5>, i.e. Raleway. */
+.paper-cite { margin: 0; font-family: var(--display); font-weight: 500; color: var(--ink); }
+.paper-cite strong { color: inherit; }
+.paper-cite em { font-style: italic; }
+/* Row under each citation, as on the original site: Abstract  PDF  Replication
+   中文摘要 on one indented line, labels as written. The abstract toggles are
+   checkboxes inside labels; opening one shows its text below the row and the
+   row does not move. :has() on .paper-more shows the matching panel. */
+.paper-actions {
+  display: flex; flex-wrap: wrap; gap: .2rem 1.4rem;
+  margin: .35rem 0 0; padding-left: 1.6rem;
+  font-size: .92rem; font-weight: 600;
+}
+.paper-actions a, .abs-toggle { color: var(--link); }
+.abs-toggle { cursor: pointer; user-select: none; }
+.abs-toggle:hover { color: var(--link-hover); text-decoration: underline; }
+.abs-toggle input {            /* visually hidden, still keyboard-focusable */
+  position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0;
+}
+.abs-toggle:has(input:focus-visible) { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 2px; }
+.abs-panel {
+  margin: .6rem 0 0; padding: .7rem .9rem; border-left: 3px solid var(--accent);
+  background: var(--panel); color: var(--ink); font-size: .95rem;
+  max-width: 70ch;
+}
+@supports selector(:has(input)) {
+  .abs-panel { display: none; }
+  .paper-more:has(.abs-en-check:checked) .abs-en,
+  .paper-more:has(.abs-zh-check:checked) .abs-zh { display: block; }
+}
+/* No :has() (Safari < 15.4, Chrome < 105, Firefox < 121): show the abstracts
+   open and hide the toggles, instead of hiding the text. */
+@supports not selector(:has(input)) {
+  .abs-toggle { display: none; }
+}
+
+/* ---- contact ---- */
+.contact-list { list-style: none; padding: 0; margin: 0 0 1rem; color: var(--ink); }
+.contact-list li {
+  margin-bottom: .5rem;
+  display: grid; grid-template-columns: 6.5rem 1fr; gap: 0 .5rem;
+}
+.contact-label { font-weight: 600; color: var(--heading); }
+.contact-list li > :last-child { min-width: 0; overflow-wrap: anywhere; }
+/* Narrow phones: label above value, so the email cannot overflow. */
+@media (max-width: 400px) {
+  .contact-list li { grid-template-columns: 1fr; }
+}
+
+/* ---- 404 ---- */
+.notfound { text-align: center; padding: 3rem 0; }
+.notfound .btn { margin-top: 1rem; }
+
+/* ---- footer (original dark footer) ---- */
+.site-footer { margin-top: 1rem; background: var(--footer-bg); }
+.footer-content {
+  max-width: var(--maxw); margin: 0 auto; padding: 1.5rem 1.25rem;
+  color: #d7d4d0; font-size: .85rem;
+}
+.footer-content p { margin: 0; }
